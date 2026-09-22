@@ -1,49 +1,12 @@
-name: Build APK
-on: [push]
+[app]
+title = My Wallet
+package.name = mywallet
+package.domain = com.mywallet.app
+source.dir =.
+source.include_exts = py,png,jpg,kv
+version = 0.1
+requirements = python3,kivy
+orientation = portrait
 
-jobs:
-  build:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install System Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            build-essential \
-            ccache \
-            git \
-            libffi-dev \
-            libssl-dev \
-            openjdk-17-jdk \
-            unzip \
-            zip \
-            zlib1g-dev
-
-      - name: Install Buildozer and Cython
-        run: |
-          pip install --upgrade pip
-          pip install buildozer cython virtualenv
-
-      # Forces the output folder to exist with standard permissions
-      - name: Prepare Workspace Directories
-        run: mkdir -p bin .buildozer
-
-      - name: Build APK with Buildozer
-        run: |
-          export NO_DOCKER=1
-          # The "yes |" pipe automatically answers "y" to the Android SDK license prompt
-          yes | buildozer android debug
-
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: apk-file
-          path: bin/*.apk
+[buildozer]
+log_level = 2
