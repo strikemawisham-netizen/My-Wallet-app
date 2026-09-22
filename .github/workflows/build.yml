@@ -8,16 +8,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Fixes permissions so the Buildozer Docker container can write to the workspace
+      - name: Fix Workspace Permissions
+        run: chown -R 1000:1000 .
+
       - name: Build APK with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
         with:
           command: buildozer android debug
           buildozer_version: stable
+          # IF your buildozer.spec is inside a folder, uncomment and fix the line below:
+          # workdir: your_subfolder_name 
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: apk-file
           path: ${{ steps.buildozer.outputs.filename }}
-          
