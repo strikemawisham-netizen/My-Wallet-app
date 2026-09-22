@@ -1,30 +1,46 @@
 name: Build APK
 on: [push]
+
 jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup Java 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-      - name: Setup Python
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
-      - name: Install dependencies
+          python-version: '3.11'
+
+      - name: Install System Dependencies
         run: |
-          sudo apt update
-          sudo apt install -y python3-pip zip unzip openjdk-17-jdk libncurses5-dev libffi-dev libssl-dev automake autoconf libtool pkg-config zlib1g-dev libltdl-dev
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            ccache \
+            git \
+            libffi-dev \
+            libssl-dev \
+            openjdk-17-jdk \
+            unzip \
+            zip \
+            zlib1g-dev
+
+      - name: Install Buildozer and Cython
+        run: |
           pip install --upgrade pip
-          pip install buildozer cython==0.29.33
-      - name: Build APK
+          pip install buildozer cython virtualenv
+
+      - name: Build APK with Buildozer
         run: |
+          # The NO_DOCKER=1 flag forces buildozer to run natively on the runner
+          export NO_DOCKER=1
           buildozer android debug
-      - name: Upload APK
+
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: my-wallet-apk
+          name: apk-file
           path: bin/*.apk
+          
