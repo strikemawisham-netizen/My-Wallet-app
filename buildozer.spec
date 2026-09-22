@@ -32,15 +32,18 @@ jobs:
           pip install --upgrade pip
           pip install buildozer cython virtualenv
 
+      # Forces the output folder to exist with standard permissions
+      - name: Prepare Workspace Directories
+        run: mkdir -p bin .buildozer
+
       - name: Build APK with Buildozer
         run: |
-          # The NO_DOCKER=1 flag forces buildozer to run natively on the runner
           export NO_DOCKER=1
-          buildozer android debug
+          # The "yes |" pipe automatically answers "y" to the Android SDK license prompt
+          yes | buildozer android debug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: apk-file
           path: bin/*.apk
-          
