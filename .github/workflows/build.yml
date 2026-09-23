@@ -31,7 +31,13 @@ jobs:
             openjdk-17-jdk \
             unzip \
             zip \
-            zlib1g-dev
+            zlib1g-dev \
+            autoconf \
+            libtool \
+            pkg-config \
+            cmake \
+            libncurses5-dev \
+            libncursesw5-dev
 
       - name: Install Python Toolchain Dependencies
         run: |
