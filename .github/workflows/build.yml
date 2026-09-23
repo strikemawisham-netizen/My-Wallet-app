@@ -25,11 +25,20 @@ jobs:
           path: ~/.buildozer
           key: ${{ runner.os }}-buildozer-${{ hashFiles('**/buildozer.spec') }}
 
-      # We stripped this down to only the basic tools required to compile zip/ffi packages
-      - name: Install Missing Minimal System Build Tools
+      # Adding libtool-bin directly fixes the undefined macro error
+      - name: Install System Compilation Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y ccache libffi-dev libssl-dev autoconf libtool apktool
+          sudo apt-get install -y \
+            autoconf \
+            libtool \
+            libtool-bin \
+            pkg-config \
+            ccache \
+            libffi-dev \
+            libssl-dev \
+            unzip \
+            zip
 
       - name: Install Python Toolchain Dependencies
         run: |
@@ -49,3 +58,4 @@ jobs:
         with:
           name: compiled-android-apk
           path: bin/*.apk
+          
