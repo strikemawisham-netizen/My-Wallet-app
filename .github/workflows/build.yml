@@ -8,50 +8,13 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      # This action encapsulates the entire Android SDK, NDK, and compilation environment
+      - name: Build APK with Buildozer Container
+        uses: Substack/buildozer-action@v1
+        id: buildozer
         with:
-          python-version: '3.10'
-
-      - name: Setup Java JDK
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Cache Buildozer Global Directory
-        uses: actions/cache@v4
-        with:
-          path: ~/.buildozer
-          key: ${{ runner.os }}-buildozer-${{ hashFiles('**/buildozer.spec') }}
-
-      # Adding libtool-bin directly fixes the undefined macro error
-      - name: Install System Compilation Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            autoconf \
-            libtool \
-            libtool-bin \
-            pkg-config \
-            ccache \
-            libffi-dev \
-            libssl-dev \
-            unzip \
-            zip
-
-      - name: Install Python Toolchain Dependencies
-        run: |
-          pip install --upgrade pip
-          pip install "Cython>=0.29.36,<3.0" buildozer
-
-      - name: Prepare Local Directories
-        run: mkdir -p bin .buildozer
-
-      - name: Build Android Package
-        run: |
-          export NO_DOCKER=1
-          yes | buildozer android debug
+          command: buildozer android debug
+          buildozer_version: stable
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
