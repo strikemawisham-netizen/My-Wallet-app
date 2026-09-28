@@ -1,1 +1,1 @@
-# My-Wallet-app
+Wallet-app
