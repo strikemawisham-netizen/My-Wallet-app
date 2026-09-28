@@ -1,24 +1,37 @@
-# (string) Title of your application
-title = My App
+name: Build Android APK
 
-# (string) Package name
-package.name = myapp
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
 
-# (string) Package domain (needed for android/ios packaging)
-package.domain = org.test
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-# (list) Application requirements
-# Pin Kivy to 2.3.0 as required in main.py
-requirements = python3,kivy==2.3.0
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-# (list) Permissions
-# android.permissions = INTERNET
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-# (int) Target Android API, should be 33 or 34
-android.api = 33
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libreadline-dev libsqlite3-dev libgdbm-dev libdb5.3-dev libbz2-dev libexpat1-dev liblzma-dev tk-dev libffi-dev libssl-dev
+          pip install --upgrade pip setuptools
+          pip install buildozer cython==0.29.33
 
-# (int) Minimum API your APK will support
-android.minapi = 21
+      - name: Build APK with Buildozer
+        run: |
+          buildozer android debug
 
-# (string) Android NDK version to use
-android.ndk = 25b
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-apk
+          path: bin/*.apk
+          
