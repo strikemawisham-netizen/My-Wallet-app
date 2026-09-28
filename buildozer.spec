@@ -7,7 +7,7 @@ version = 0.1
 requirements = python3,kivy==2.3.0
 orientation = portrait
 
-# Android configuration (Must be under the [app] section)
+# Android configuration mapping parameters
 android.api = 33
 android.minapi = 21
 android.ndk = 25b
