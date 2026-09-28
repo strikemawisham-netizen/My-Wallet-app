@@ -13,7 +13,7 @@ log_level = 2
 [app:android]
 android.api = 33
 android.minapi = 21
-android.ndk = 25b
+android.ndk = 23b
 android.sdk = 33
 android.accept_sdk_license_agreement = True
 android.build_tools_version = 33.0.2
