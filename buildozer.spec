@@ -13,6 +13,7 @@ log_level = 2
 [app:android]
 android.api = 33
 android.minapi = 21
-android.ndk = 23b
+android.ndk = 25b
 android.accept_sdk_license_agreement = True
 android.archs = arm64-v8a
+p4a.branch = develop
