@@ -1,5 +1,5 @@
 import kivy
-kivy.require('2.3.0')
+kivy.require('2.3.0') # remove this line, it blocks 2.3.1
 
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
