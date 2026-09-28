@@ -11,6 +11,7 @@ class MainScreen(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(orientation='vertical', padding=20, spacing=10, **kwargs)
         
+        # Safe structural UI definitions
         self.lbl = Label(
             text="App Compiled Successfully!", 
             font_size='24sp',
@@ -36,4 +37,3 @@ class MyApp(App):
 
 if __name__ == '__main__':
     MyApp().run()
-        
