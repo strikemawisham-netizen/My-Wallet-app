@@ -1,40 +1,59 @@
 name: Build APK
-on: [push]
+on: [push, pull_request]
+
 jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
       - name: Set up Python 3.10
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-      - name: Install dependencies
+
+      - name: Install Base Linux Toolchains
         run: |
           sudo apt update
           sudo apt install -y openjdk-17-jdk zip unzip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libtinfo5 cmake libffi-dev libssl-dev libfreetype6-dev wget
+
+      - name: Install Stable Python Packages
+        run: |
           pip install --upgrade pip
-          pip install Cython==0.29.33
+          pip install Cython==0.29.36
           pip install git+https://github.com/kivy/buildozer.git
           pip install git+https://github.com/kivy/python-for-android.git
-      - name: Build APK
+
+      - name: Inject Pre-Configured Android Toolchain
         run: |
+          # Create and inject modern command-line tools structures manually
           mkdir -p $HOME/.buildozer/android/platform/android-sdk/cmdline-tools
           cd $HOME/.buildozer/android/platform/android-sdk/cmdline-tools
           wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
           unzip -q commandlinetools-linux-11076708_latest.zip
           mkdir -p latest
           mv cmdline-tools/* latest/ || true
+          
+          # Force symlink structural paths to map buildozer legacy rules
           mkdir -p $HOME/.buildozer/android/platform/android-sdk/tools/bin
           ln -sf $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager $HOME/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
+          
+          # Inject explicit hardware license keys to bypass prompt hangs
           mkdir -p $HOME/.buildozer/android/platform/android-sdk/licenses
           echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
           echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
           echo "24333f8a63b6825ea9c5514f83c1059f721bb06a" >> $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+
+      - name: Build Android Package
+        run: |
           cd $GITHUB_WORKSPACE
-          buildozer android debug
-      - name: Upload APK
+          export NO_DOCKER=1
+          yes | buildozer android debug
+
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: apk
+          name: compiled-android-apk
           path: bin/*.apk
+          
