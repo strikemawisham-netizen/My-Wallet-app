@@ -14,14 +14,21 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y openjdk-17-jdk zip unzip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libtinfo5 cmake libffi-dev libssl-dev libfreetype6-dev
+          sudo apt install -y openjdk-17-jdk zip unzip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libtinfo5 cmake libffi-dev libssl-dev libfreetype6-dev wget
           pip install --upgrade pip
           pip install Cython==0.29.33
           pip install git+https://github.com/kivy/buildozer.git
           pip install git+https://github.com/kivy/python-for-android.git
 
-      - name: Accept Android licenses
+      - name: Install Android cmdline-tools manually
         run: |
+          mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools
+          cd ~/.buildozer/android/platform/android-sdk/cmdline-tools
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+          unzip -q commandlinetools-linux-11076708_latest.zip
+          mkdir -p latest
+          mv cmdline-tools/* latest/ 2>/dev/null || mv cmdline-tools latest/ || true
+          mv latest/cmdline-tools/* latest/ 2>/dev/null || true
           mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
           echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
           echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
