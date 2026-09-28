@@ -1,37 +1,15 @@
-name: Build Android APK
-
-on:
-  push:
-    branches: [ "main" ]
-  workflow_dispatch:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libreadline-dev libsqlite3-dev libgdbm-dev libdb5.3-dev libbz2-dev libexpat1-dev liblzma-dev tk-dev libffi-dev libssl-dev
-          pip install --upgrade pip setuptools
-          pip install buildozer cython==0.29.33
-
-      - name: Build APK with Buildozer
-        run: |
-          buildozer android debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: package-apk
-          path: bin/*.apk
-          
+[app]
+title = My Wallet App
+package.name = mywalletapp
+package.domain = com.strike.mywalletapp
+source.dir =.
+version = 0.1
+requirements = python3,kivy==2.3.0
+orientation = portrait
+[buildozer]
+log_level = 2
+[app:android]
+android.api = 33
+android.minapi = 21
+android.ndk = 25b
+android.accept_sdk_license_agreement = True
