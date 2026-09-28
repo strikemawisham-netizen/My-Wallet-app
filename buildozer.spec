@@ -1,28 +1,24 @@
-[app]
-title = MinimalBuild
-package.name = minimalbuild
-package.domain = org.example
+# (string) Title of your application
+title = My App
 
-source.dir = .
-source.include_exts = py,png,jpg,kv,atlas
+# (string) Package name
+package.name = myapp
 
-version = 0.1
+# (string) Package domain (needed for android/ios packaging)
+package.domain = org.test
+
+# (list) Application requirements
+# Pin Kivy to 2.3.0 as required in main.py
 requirements = python3,kivy==2.3.0
 
-orientation = portrait
-fullscreen = 0
+# (list) Permissions
+# android.permissions = INTERNET
 
-# Android specific configurations
-android.api = 34
+# (int) Target Android API, should be 33 or 34
+android.api = 33
+
+# (int) Minimum API your APK will support
 android.minapi = 21
-android.ndk_api = 21
-android.accept_sdk_license = True
-android.skip_update = False
 
-# Build restrictions
-android.archs = arm64-v8a, armeabi-v7a
-android.allow_backup = True
-
-[buildozer]
-log_level = 2
-warn_on_root = 1
+# (string) Android NDK version to use
+android.ndk = 25b
