@@ -14,11 +14,14 @@ jobs:
           sudo apt update
           sudo apt install -y openjdk-17-jdk zip unzip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libtinfo5 cmake libffi-dev libssl-dev libfreetype6-dev wget
           pip install --upgrade pip
-          pip install Cython==3.0.11
-          pip install buildozer
+          pip install Cython==3.0.11 buildozer
+      - name: Clean old build
+        run: |
+          rm -rf.buildozer
+          rm -rf bin
       - name: Build APK
         run: |
-          buildozer android debug
+          buildozer android debug --verbose
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
